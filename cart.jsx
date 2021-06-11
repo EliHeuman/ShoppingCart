@@ -1,9 +1,9 @@
 // simulate getting products from DataBase
 const products = [
-  { name: "Apples_:", country: "Italy", cost: 3, instock: 10 },
-  { name: "Oranges:", country: "Spain", cost: 4, instock: 3 },
-  { name: "Beans__:", country: "USA", cost: 2, instock: 5 },
-  { name: "Cabbage:", country: "USA", cost: 1, instock: 8 },
+  { name: "Apples", country: "Italy", cost: 3, instock: 10 },
+  { name: "Oranges", country: "Spain", cost: 4, instock: 3 },
+  { name: "Beans", country: "USA", cost: 2, instock: 5 },
+  { name: "Cabbage", country: "USA", cost: 1, instock: 8 },
 ];
 //=========Cart=============
 const Cart = (props) => {
@@ -97,19 +97,33 @@ const Products = (props) => {
       data: [],
     }
   );
-  console.log(`Rendering Products ${JSON.stringify(data)}`);
+  // console.log(`Rendering Products ${JSON.stringify(data)}`);
   // Fetch Data
   const addToCart = (e) => {
     let name = e.target.name;
+    let instock = e.target.instock
     let item = items.filter((item) => item.name == name);
     if (item[0].instock == 0) return;
     item[0].instock = item[0].instock - 1;
-    console.log(`add to Cart ${JSON.stringify(item)}`);
+    let stock = items.filter((item) => item.instock == instock && item.name == name);
+    // console.log(`Log items ${stock}`)
+    // console.log(`add to Cart ${JSON.stringify(item)}`);
     setCart([...cart, ...item]);
   };
-  const deleteCartItem = (index) => {
+  const deleteCartItem = (index, item) => {
+    let name = item.name;
+    console.log(name);
+    let instock = item.instock
+    console.log(instock);
+    // let newItems = items.map((item) => {
+    //   if(item.name == name && item[0].instock == instock){
+    //     item[0].instock = item[0].instock + 1;
+    //   };
+    // });
+    // console.log(newItems);
     let newCart = cart.filter((item, i) => index != i);
     setCart(newCart);
+    // setItems(newItems);
   };
   const photos = ["apple.png", "orange.png", "beans.png", "cabbage.png"];
 
@@ -121,7 +135,7 @@ const Products = (props) => {
       <li key={index}>
         <Image src={url} width={70} roundedCircle></Image>
         <Button variant="primary" size="large">
-          {item.name}:{item.cost}
+          {item.name}:{item.cost}:{item.instock}
         </Button>
         <input name={item.name} instock={item.instock} type="submit" onClick={addToCart}  ></input>
       </li>
@@ -132,12 +146,14 @@ const Products = (props) => {
       <Card key={index}>
         <Card.Header>
           <Accordion.Toggle as={Button} variant="link" eventKey={1 + index}>
-            {item.name}
+            {item.name} 
           </Accordion.Toggle>
         </Card.Header>
         <Accordion.Collapse
-          onClick={() => deleteCartItem(index)}
           eventKey={1 + index}
+          name={item.name}
+          instock={item.instock}
+          onClick={() => deleteCartItem(index, item)}
         >
           <Card.Body>
             $ {item.cost} from {item.country}
@@ -168,10 +184,23 @@ const Products = (props) => {
   };
   // TODO: implement the restockProducts function
   const restockProducts = (url) => {
-    console.log(url);
     doFetch(url)
-    let newData = [...data];
-    setItems([...items, ...newData]);
+    const newArray = [];
+    let newData = [...items, ...data];
+    console.log(items);
+    console.log(data);
+    for (let i = 0; i < newData.length-1; i++){
+      let newD = [...newData]
+      let name = newD[i].name;
+      let test = newD.filter(item => name == item.name).reduce((itemA,itemB) => ({instock: itemB.instock + itemA.instock}));
+      newD[i].instock = test.instock;
+    let newItem = newD.find(item => item.name == name);
+    newArray.indexOf(newItem) !== -1 ? console.log(`exists`) : newArray.push(newItem);
+      console.log(newArray);
+    }
+    // let stock=newData.instock
+    // newData.reduce((instock, stock=newData.instockk ) => instock + stock, 0)
+    setItems([...newArray,]);
   };
 
   return (
