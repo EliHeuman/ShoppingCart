@@ -184,24 +184,24 @@ const Products = (props) => {
   };
   // TODO: implement the restockProducts function
   const restockProducts = (url) => {
-    doFetch(url)
-    const newArray = [];
-    let newData = [...items, ...data];
-    console.log(items);
-    console.log(data);
-    for (let i = 0; i < newData.length-1; i++){
-      let newD = [...newData]
-      let name = newD[i].name;
-      let test = newD.filter(item => name == item.name).reduce((itemA,itemB) => ({instock: itemB.instock + itemA.instock}));
-      newD[i].instock = test.instock;
-    let newItem = newD.find(item => item.name == name);
-    newArray.indexOf(newItem) !== -1 ? console.log(`exists`) : newArray.push(newItem);
-      console.log(newArray);
-    }
-    // let stock=newData.instock
-    // newData.reduce((instock, stock=newData.instockk ) => instock + stock, 0)
-    setItems([...newArray,]);
+    doFetch(url);
+    let newItems = data.map((item) => {
+      let { name, country, cost, instock } = item;
+      return { name, country, cost, instock };     
+    });
+    
+    newItems.map((item) => {
+      console.log(item.name);
+      console.log(item.instock);
+        for (let index = 0; index < items.length; index++) {
+          const element = items[index];
+          element.name == item.name ? item.instock = item.instock + element.instock :console.log("non");
+        }
+      console.log(item.instock);
+    })
+    setItems([...newItems]);
   };
+
 
   return (
     <Container>
