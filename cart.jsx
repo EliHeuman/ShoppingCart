@@ -110,20 +110,24 @@ const Products = (props) => {
     // console.log(`add to Cart ${JSON.stringify(item)}`);
     setCart([...cart, ...item]);
   };
-  const deleteCartItem = (index, item) => {
+  const deleteCartItem = (item, index) => {
     let name = item.name;
-    console.log(name);
     let instock = item.instock
+    console.log(index);
+    console.log(name);
     console.log(instock);
-    // let newItems = items.map((item) => {
-    //   if(item.name == name && item[0].instock == instock){
-    //     item[0].instock = item[0].instock + 1;
-    //   };
-    // });
-    // console.log(newItems);
+    let newItems = items.map((item) => {
+      if(item.name == name){
+        item.instock = (item.instock + 1);
+      };
+      return item;
+    });
+    console.log(item.instock);
+    console.log(newItems);
+
     let newCart = cart.filter((item, i) => index != i);
     setCart(newCart);
-    // setItems(newItems);
+    setItems(newItems);
   };
   const photos = ["apple.png", "orange.png", "beans.png", "cabbage.png"];
 
@@ -152,8 +156,9 @@ const Products = (props) => {
         <Accordion.Collapse
           eventKey={1 + index}
           name={item.name}
+          index={item.index}
           instock={item.instock}
-          onClick={() => deleteCartItem(index, item)}
+          onClick={() => deleteCartItem(item, index)}
         >
           <Card.Body>
             $ {item.cost} from {item.country}
